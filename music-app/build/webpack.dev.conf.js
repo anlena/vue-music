@@ -7,6 +7,13 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+//
+//nodejs开发框架express，用来简化操作
+//
+const axios = require('axios');
+const express = require('express');
+const app = express();
+const apiRoutes = express.Router();
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -17,6 +24,27 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   
   // these devServer options should be customized in /config/index.js
   devServer: {
+    //
+    //新版代理请求
+    //
+      before(apiRoutes){
+        apiRoutes.get('/api/getDiscList', (req, res) => {
+          const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
+          axios.get(url, {
+            headers: {
+              referer: 'https://c.y.qq.com/',
+              host: 'c.y.qq.com'
+            },
+            params: req.query //这是请求的query
+          }).then((response) => {
+            //response是api地址返回的，数据在data里。
+            res.json(response.data)
+          }).catch((e) => {
+            console.log(e);
+          })
+        });
+        app.use('/api', apiRoutes);
+    },
     historyApiFallback: true,
     hot: true,
     host: process.env.HOST || config.dev.host,
