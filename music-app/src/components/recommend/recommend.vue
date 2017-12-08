@@ -26,11 +26,15 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import loading from 'base/loading/loading'
   import Scroll from 'base/scroll/scroll'
   import Slider from 'base/slider/slider'
   import {getRecommend,getDiscList} from 'api/recommend'
@@ -60,8 +64,7 @@
         getDiscList().then((res) => {
           if(res.code === ERR_OK) {
             this.discList = res.data.list;
-            console.log(res.data.list);
-
+            // console.log(res.data.list);
           }
         })
       },
@@ -74,7 +77,8 @@
     }, 
     components:{
       Slider:Slider,
-      Scroll:Scroll
+      Scroll:Scroll,
+      loading:loading
     }
   }
 </script>
